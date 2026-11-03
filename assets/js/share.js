@@ -15,8 +15,8 @@
     setPcRoomToggleState(false);
 
     var SHARE_CONFIG = {
-      title: '타임테이커즈 PC방 이벤트',
-      description: '피카 PC방에서 타임테이커즈를 하루 30분 플레이하고 회차별 마일리지를 받아보세요.',
+      title: '타임 테이커즈 PC방 이벤트',
+      description: '피카 PC방에서 타임 테이커즈를 하루 30분 플레이하고 회차별 마일리지를 받아보세요.',
       kakaoKey: 'd1c0c39f4dbac0062bf36527a3021357',
       ogImage:  'https://ics.mediaweb.co.kr/_event/20261113_timetakers/assets/Thumbnail_800x400.jpg' // ⚠️ assets/Thumbnail_800x400.jpg 필요
     };
