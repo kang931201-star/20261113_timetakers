@@ -50,6 +50,7 @@
 
   /* 공유하기 헤더 키트 */
   --header-h: 56px;
+  --hero-logo-w: clamp(120px, 13vw, 210px); /* logo-crop is 1600×606 → height = width × 0.379 */
 }
 
 * {
@@ -276,17 +277,23 @@ a:hover {
   text-align: center;
 }
 
+/* Game logo sits top-left (mirroring the PICA logo top-right) so the title + key copy own the centre.
+   The countdown panel is placed just under it (see .hero__timer). */
 .hero__logo {
-  width: clamp(160px, min(28vw, 30vh), 340px);
+  position: absolute;
+  z-index: 1;
+  top: clamp(16px, 2.4vw, 32px);
+  left: max(20px, calc((100% - 1080px) / 2));
+  width: var(--hero-logo-w);
   height: auto;
-  filter: drop-shadow(0 0 24px rgba(62, 224, 255, 0.35));
+  filter: drop-shadow(0 0 18px rgba(62, 224, 255, 0.35));
 }
 
 .hero__title {
   margin: clamp(10px, 2.2vh, 24px) 0 0;
   font-family: var(--font-display);
-  /* Sized for the accent line; the lead line is scaled so both lines end up the same width */
-  font-size: clamp(40px, min(7.6vw, 8vh), 84px);
+  /* 참고 이미지 기준: 윗줄 시안 "스팀 플레이테스트 #2" + 아랫줄 흰색 키카피, 같은 크기 */
+  font-size: clamp(30px, min(4.2vw, 6.4vh), 64px);
   font-weight: 800;
   line-height: 1.12;
   letter-spacing: -0.03em;
@@ -299,14 +306,18 @@ a:hover {
   display: block;
 }
 
-/* 0.55em ≈ accent width / lead width at the same size (Paperlogy ExtraBold) */
 .hero__title-lead {
-  margin-bottom: 0.08em;
-  font-size: 0.55em;
   line-height: 1.2;
 }
 
+/* 모바일 전용 줄바꿈 (쉼표 뒤에서 끊기) */
+.br-mo { display: none; }
+@media (max-width: 480px) {
+  .br-mo { display: inline; }
+}
+
 .hero__title-accent {
+  margin-bottom: 0.06em;
   color: var(--color-cyan);
   text-shadow: 0 0 28px rgba(62, 224, 255, 0.45);
 }
@@ -676,8 +687,9 @@ a:hover {
 .howto__grid {
   margin-top: var(--space-6);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-  gap: 20px;
+  /* 4 steps: one row on desktop, 2×2 on tablets, stacked on phones */
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
   /* Card drop shadow lives here: a filter on the clipped card itself would be clipped away */
   filter: drop-shadow(0 0 6px rgba(0, 8, 43, 0.5));
 }
@@ -763,19 +775,25 @@ a:hover {
   object-fit: contain;
 }
 
-/* Zoom into the highlighted mileage box of step3-mileage.webp (1100×658).
-   Shows a 16:10 window of x 572–1092, y 147–472 in source pixels. */
-.step-card__shot--zoom {
-  position: relative;
+/* Placeholder until the step image arrives (⚠️ steps 02/03 in index.html) */
+.step-card__shot--empty {
+  background:
+    radial-gradient(rgba(140, 180, 230, 0.18) 0.8px, transparent 1px) 0 0 / 6px 6px,
+    rgba(4, 12, 26, 0.55);
 }
 
-.step-card__shot--zoom img {
-  position: absolute;
-  top: -45.2%;
-  left: -110%;
-  width: 211.5%;
-  height: auto;
-  max-width: none;
+.step-card__desc a {
+  color: var(--color-cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 1023px) {
+  .howto__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .howto__grid { grid-template-columns: 1fr; }
 }
 
 .step-card__body {
@@ -1100,7 +1118,9 @@ a:hover {
      (starts in the same spot as before: top-left of the key art) */
   position: fixed;
   z-index: 900;
-  top: calc(var(--header-h) + clamp(16px, 2.4vw, 32px));
+  /* starts just under the top-left game logo; moves up once past the hero (.is-docked) */
+  top: calc(var(--header-h) + clamp(16px, 2.4vw, 32px) + var(--hero-logo-w) * 0.379 + 14px);
+  transition: top 0.3s ease;
   left: max(20px, calc((100% - 1080px) / 2));
   padding: 8px 12px 11px;
   backdrop-filter: blur(3px);
@@ -1114,6 +1134,10 @@ a:hover {
 
 .hero__timer[hidden] {
   display: none;
+}
+
+.hero__timer.is-docked {
+  top: calc(var(--header-h) + 16px);
 }
 
 /* Phones: past the hero the panel docks bottom-left (level with the share/TOP buttons)
@@ -1415,8 +1439,8 @@ a:hover {
   animation: title-rise 1.2s cubic-bezier(0.22, 0.8, 0.24, 1) both;
 }
 
-.has-motion .hero__title-lead   { animation-delay: 0.15s; }
-.has-motion .hero__title-accent { animation-delay: 0.5s; }
+.has-motion .hero__title-accent { animation-delay: 0.15s; }
+.has-motion .hero__title-lead   { animation-delay: 0.5s; }
 
 @keyframes title-rise {
   from {
@@ -2091,8 +2115,9 @@ a:hover {
   .hero__desc { font-size: 16px; }
 
   /* titles: clearer step up from the 15–16px body text */
-  .hero__title { font-size: 52px; }
+  .hero__title { font-size: min(34px, 8.6vw); }
   .sec-head__title { font-size: 30px; }
+  .reward .sec-head__title { font-size: min(30px, 7.3vw); } /* 두 줄 유지: 둘째 줄이 꺾이지 않게 */
   .step-card__title { font-size: 20px; }
   .use-card__title,
   .notice__title { font-size: 24px; }
@@ -2110,4 +2135,128 @@ a:hover {
 
   /* room under the last section so the floating share/TOP buttons never cover text */
   .notice { padding-bottom: 140px; }
+}
+
+/* ============================================================
+   참여 방법 03: Steam 라이브러리 설치 버튼 재현 (이미지 대신 코드)
+   크기는 카드 폭 기준(cqw)이라 PC/모바일 모두 같은 비율로 보임
+   ============================================================ */
+.steam-mock {
+  position: relative;
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  background: #1b2838;
+}
+.steam-mock__hero {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(180deg, rgba(27, 40, 56, 0) 55%, #1b2838 100%),
+    url("../images/main-2400.webp") center 30% / cover no-repeat;
+}
+.steam-mock__logo {
+  width: 52cqw;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
+}
+.steam-mock__bar {
+  display: flex;
+  align-items: center;
+  gap: 4cqw;
+  padding: 4.5cqw 5cqw;
+  background: linear-gradient(90deg, #1e2c3d, #23384f);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.steam-mock__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2.2cqw;
+  padding: 2.6cqw 6cqw 2.6cqw 4.6cqw;
+  border-radius: 1.2cqw;
+  background: linear-gradient(90deg, #47bfff 0%, #1a6dff 100%);
+  color: #fff;
+  font-family: "Pretendard", sans-serif;
+  font-size: 5.6cqw;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 0 0 0 rgba(71, 191, 255, 0.55);
+  animation: steamPulse 2.4s ease-out infinite;
+}
+.steam-mock__btn svg { width: 5.4cqw; height: 5.4cqw; }
+.steam-mock__info {
+  display: flex;
+  flex-direction: column;
+  gap: 1cqw;
+  min-width: 0;
+  font-family: "Pretendard", sans-serif;
+  line-height: 1.2;
+}
+.steam-mock__name {
+  color: #fff;
+  font-size: 4.4cqw;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.steam-mock__state {
+  color: #8f98a0;
+  font-size: 3.6cqw;
+  white-space: nowrap;
+}
+.steam-mock__cursor {
+  position: absolute;
+  left: 31cqw;
+  bottom: 0.5cqw;
+  width: 6cqw;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+  pointer-events: none;
+}
+@keyframes steamPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(71, 191, 255, 0.55); }
+  70%  { box-shadow: 0 0 0 3cqw rgba(71, 191, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(71, 191, 255, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .steam-mock__btn { animation: none; }
+}
+
+/* 참여 방법 02: Steam 상점 페이지 플레이테스트 신청 패널 (위 .steam-mock 공통 사용) */
+.steam-mock__panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3cqw;
+  padding: 4.5cqw 5cqw;
+  background: linear-gradient(90deg, #3c4c5d, #4d5d6e);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.steam-mock__ptitle {
+  color: #fff;
+  font-family: "Pretendard", sans-serif;
+  font-size: 4.8cqw;
+  font-weight: 600;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.steam-mock__btn--green {
+  align-self: flex-end;
+  padding: 2.6cqw 5.4cqw;
+  background: linear-gradient(90deg, #75b022 5%, #588a1b 95%);
+  color: #d2efa9;
+  font-size: 5cqw;
+  font-weight: 600;
+  animation-name: steamPulseGreen;
+}
+.steam-mock--store .steam-mock__cursor {
+  left: auto;
+  right: 1.5cqw;
+  bottom: 0.5cqw;
+}
+@keyframes steamPulseGreen {
+  0%   { box-shadow: 0 0 0 0 rgba(164, 208, 7, 0.6); }
+  70%  { box-shadow: 0 0 0 3cqw rgba(164, 208, 7, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(164, 208, 7, 0); }
 }
