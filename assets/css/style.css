@@ -50,7 +50,7 @@
 
   /* 공유하기 헤더 키트 */
   --header-h: 56px;
-  --hero-logo-w: clamp(120px, 13vw, 210px); /* logo-crop is 1600×606 → height = width × 0.379 */
+  --hero-logo-w: clamp(150px, 16vw, 270px); /* logo-crop is 620×208 → height = width × 0.336 */
 }
 
 * {
@@ -121,6 +121,22 @@ a:hover {
   line-height: 1.3;
   letter-spacing: -0.03em;
   text-wrap: balance;
+}
+
+/* 제목 윗줄(보조 문구)은 작게, 아랫줄 강조는 그대로 */
+.sec-head__lead {
+  display: block;
+  margin-bottom: 0.15em;
+  font-size: 0.68em;
+}
+
+/* 모바일: 윗줄을 두 줄로 나누고(br-mo) 조금 키워서 3줄 제목으로 */
+@media (max-width: 480px) {
+  .sec-head__lead {
+    margin-bottom: 0.12em;
+    font-size: 0.8em;
+    line-height: 1.25;
+  }
 }
 
 .sec-head__desc {
@@ -281,12 +297,25 @@ a:hover {
    The countdown panel is placed just under it (see .hero__timer). */
 .hero__logo {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   top: clamp(16px, 2.4vw, 32px);
   left: max(20px, calc((100% - 1080px) / 2));
   width: var(--hero-logo-w);
   height: auto;
   filter: drop-shadow(0 0 18px rgba(62, 224, 255, 0.35));
+}
+
+/* 로고 뒤 딤드: 밝은 하늘 배경 위에서도 로고가 잘 보이게 어둡게 깔아 줌 */
+.hero__logo-dim {
+  position: absolute;
+  z-index: 1;
+  top: calc(clamp(16px, 2.4vw, 32px) + var(--hero-logo-w) * 0.168 - var(--hero-logo-w) * 0.4);
+  left: calc(max(20px, (100% - 1080px) / 2) + var(--hero-logo-w) * 0.5 - var(--hero-logo-w) * 0.8);
+  width: calc(var(--hero-logo-w) * 1.6);
+  height: calc(var(--hero-logo-w) * 0.8);
+  /* 딤 컬러 #004F80 */
+  background: radial-gradient(closest-side, rgba(0, 79, 128, 0.9) 0%, rgba(0, 79, 128, 0.72) 45%, rgba(0, 79, 128, 0) 100%);
+  pointer-events: none;
 }
 
 .hero__title {
@@ -324,11 +353,18 @@ a:hover {
 
 .hero__desc {
   margin: clamp(8px, 1.6vh, 18px) 0 0;
-  max-width: 560px;
+  max-width: 760px;
   font-size: clamp(15px, 1.6vw, 18px);
   line-height: 1.65;
   color: var(--color-text-sub);
   text-wrap: pretty;
+}
+
+/* 서브 텍스트 강조: 최대 10,000 마일리지 */
+.hero__desc-em {
+  color: var(--color-cyan);
+  font-weight: 700;
+  text-shadow: 0 0 12px rgba(62, 224, 255, 0.45);
 }
 
 .hero__actions {
@@ -363,7 +399,7 @@ a:hover {
 }
 
 /* Bottom info bar — HUD strip across the bottom of the hero.
-   One centred highlight panel (blue fill, top brackets, dot indicator) holds both rows;
+   One centred highlight panel (blue fill, top brackets) holds both rows;
    period and target share the same label / value styles, labels aligned in a column. */
 .hero__bar {
   position: relative;
@@ -429,21 +465,6 @@ a:hover {
   right: max(8%, calc(50% - 240px));
   border-right: 1px solid rgba(110, 195, 255, 0.35);
   transform: skewX(45deg);
-}
-
-/* Dot indicator (first two lit) centred above the panel (the panel is centred in the bar) */
-.hero__bar::before {
-  content: '';
-  position: absolute;
-  top: -9px;
-  left: 50%;
-  opacity: 0.5;
-  width: 34px;
-  height: 4px;
-  transform: translateX(-50%);
-  background:
-    linear-gradient(90deg, var(--color-cyan) 0 4px, transparent 4px 7px, var(--color-cyan) 7px 11px, transparent 11px) 0 0 / 34px 4px no-repeat,
-    repeating-linear-gradient(90deg, rgba(62, 224, 255, 0.3) 0 4px, transparent 4px 7px);
 }
 
 @media (max-width: 640px) {
@@ -1119,7 +1140,7 @@ a:hover {
   position: fixed;
   z-index: 900;
   /* starts just under the top-left game logo; moves up once past the hero (.is-docked) */
-  top: calc(var(--header-h) + clamp(16px, 2.4vw, 32px) + var(--hero-logo-w) * 0.379 + 14px);
+  top: calc(var(--header-h) + clamp(16px, 2.4vw, 32px) + var(--hero-logo-w) * 0.336 + 14px);
   transition: top 0.3s ease;
   left: max(20px, calc((100% - 1080px) / 2));
   padding: 8px 12px 11px;
@@ -2117,7 +2138,7 @@ a:hover {
   /* titles: clearer step up from the 15–16px body text */
   .hero__title { font-size: min(34px, 8.6vw); }
   .sec-head__title { font-size: 30px; }
-  .reward .sec-head__title { font-size: min(30px, 7.3vw); } /* 두 줄 유지: 둘째 줄이 꺾이지 않게 */
+  .reward .sec-head__title { font-size: min(26px, 6.4vw); } /* 강조 줄(최대 10,000 마일리지를 쟁탈하라!)이 한 줄에 들어가게 */
   .step-card__title { font-size: 20px; }
   .use-card__title,
   .notice__title { font-size: 24px; }
@@ -2138,7 +2159,8 @@ a:hover {
 }
 
 /* ============================================================
-   참여 방법 03: Steam 라이브러리 설치 버튼 재현 (이미지 대신 코드)
+   참여 방법 02·03: Steam 패널 재현 (이미지 대신 코드, 한국어)
+   02 = 상점 페이지 "Playtest 참가" 회색 패널 / 03 = 승인 후 "지금 플레이" 초록 패널
    크기는 카드 폭 기준(cqw)이라 PC/모바일 모두 같은 비율로 보임
    ============================================================ */
 .steam-mock {
@@ -2153,110 +2175,107 @@ a:hover {
   display: grid;
   place-items: center;
   background:
-    linear-gradient(180deg, rgba(27, 40, 56, 0) 55%, #1b2838 100%),
+    linear-gradient(180deg, rgba(27, 40, 56, 0) 50%, #1b2838 100%),
     url("../images/main-2400.webp") center 30% / cover no-repeat;
 }
-.steam-mock__logo {
-  width: 52cqw;
+/* .step-card__shot img(폭 100%·cover)보다 우선하도록 선택자를 한 단계 높임 */
+.steam-mock .steam-mock__logo {
+  width: 34cqw;
+  height: auto;
+  object-fit: contain;
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
 }
-.steam-mock__bar {
-  display: flex;
-  align-items: center;
-  gap: 4cqw;
-  padding: 4.5cqw 5cqw;
-  background: linear-gradient(90deg, #1e2c3d, #23384f);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-.steam-mock__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 2.2cqw;
-  padding: 2.6cqw 6cqw 2.6cqw 4.6cqw;
-  border-radius: 1.2cqw;
-  background: linear-gradient(90deg, #47bfff 0%, #1a6dff 100%);
-  color: #fff;
-  font-family: "Pretendard", sans-serif;
-  font-size: 5.6cqw;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-  box-shadow: 0 0 0 0 rgba(71, 191, 255, 0.55);
-  animation: steamPulse 2.4s ease-out infinite;
-}
-.steam-mock__btn svg { width: 5.4cqw; height: 5.4cqw; }
-.steam-mock__info {
+.steam-mock__panel {
   display: flex;
   flex-direction: column;
-  gap: 1cqw;
-  min-width: 0;
+  gap: 2cqw;
+  margin: 0 3cqw 3cqw;
+  padding: 3.4cqw 3.6cqw 3cqw;
+  border-radius: 1cqw;
   font-family: "Pretendard", sans-serif;
+}
+.steam-mock--request .steam-mock__panel {
+  background: linear-gradient(90deg, #3a4857 0%, #57636f 100%);
+}
+.steam-mock--play .steam-mock__panel {
+  background: linear-gradient(90deg, #5d8d25 0%, #45701f 100%);
+}
+.steam-mock__ptitle {
+  color: #fff;
+  font-size: 4.6cqw;
+  font-weight: 600;
   line-height: 1.2;
 }
-.steam-mock__name {
-  color: #fff;
-  font-size: 4.4cqw;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.steam-mock__row {
+  display: flex;
+  align-items: flex-end;
+  gap: 3cqw;
 }
-.steam-mock__state {
-  color: #8f98a0;
-  font-size: 3.6cqw;
+.steam-mock__pdesc {
+  flex: 1;
+  min-width: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 2.9cqw;
+  line-height: 1.35;
+}
+.steam-mock--request .steam-mock__pdesc { color: #b8c2cc; }
+.steam-mock--play .steam-mock__pdesc { color: #d6ebb8; }
+
+/* 초록 버튼 + 검은 테두리 (Steam 버튼 포커스 모양) */
+.steam-mock__btn {
+  position: relative;
+  flex: none;
+  padding: 2.2cqw 4cqw;
+  border: 0.6cqw solid #0b0f14;
+  border-radius: 0.8cqw;
+  background: linear-gradient(90deg, #79b528 0%, #5f9420 100%);
+  color: #e3f6c5;
+  font-size: 4cqw;
+  font-weight: 600;
+  line-height: 1;
   white-space: nowrap;
+  animation: steamPulseGreen 2.4s ease-out infinite;
 }
 .steam-mock__cursor {
   position: absolute;
-  left: 31cqw;
-  bottom: 0.5cqw;
-  width: 6cqw;
+  right: -2.5cqw;
+  bottom: -4.5cqw;
+  width: 5.6cqw;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
   pointer-events: none;
 }
-@keyframes steamPulse {
-  0%   { box-shadow: 0 0 0 0 rgba(71, 191, 255, 0.55); }
-  70%  { box-shadow: 0 0 0 3cqw rgba(71, 191, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(71, 191, 255, 0); }
+@keyframes steamPulseGreen {
+  0%   { box-shadow: 0 0 0 0 rgba(164, 208, 7, 0.6); }
+  70%  { box-shadow: 0 0 0 2.6cqw rgba(164, 208, 7, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(164, 208, 7, 0); }
 }
 @media (prefers-reduced-motion: reduce) {
   .steam-mock__btn { animation: none; }
 }
 
-/* 참여 방법 02: Steam 상점 페이지 플레이테스트 신청 패널 (위 .steam-mock 공통 사용) */
-.steam-mock__panel {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 3cqw;
-  padding: 4.5cqw 5cqw;
-  background: linear-gradient(90deg, #3c4c5d, #4d5d6e);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-.steam-mock__ptitle {
-  color: #fff;
-  font-family: "Pretendard", sans-serif;
-  font-size: 4.8cqw;
-  font-weight: 600;
-  line-height: 1.1;
-  white-space: nowrap;
-}
-.steam-mock__btn--green {
-  align-self: flex-end;
-  padding: 2.6cqw 5.4cqw;
+/* 02 참가 신청 버튼: Steam 상점 "Playtest 참가하기" 버튼처럼
+   밝은 연두 그라데이션 + 연한 글자, 검은 테두리 없음, 패널 오른쪽 아래에 살짝 걸치게 */
+.steam-mock--request .steam-mock__btn {
+  margin-bottom: -5.4cqw;
+  padding: 2cqw 3.6cqw;
+  border: 0;
+  border-radius: 0.5cqw;
   background: linear-gradient(90deg, #75b022 5%, #588a1b 95%);
+  box-shadow: 0 0 0 0.3cqw rgba(190, 238, 120, 0.35), 0 0.6cqw 1.6cqw rgba(0, 0, 0, 0.45);
   color: #d2efa9;
-  font-size: 5cqw;
-  font-weight: 600;
-  animation-name: steamPulseGreen;
+  font-size: 3.4cqw;
+  font-weight: 500;
+  animation: steamPulseLime 2.4s ease-out infinite;
 }
-.steam-mock--store .steam-mock__cursor {
-  left: auto;
-  right: 1.5cqw;
-  bottom: 0.5cqw;
+.steam-mock--request .steam-mock__panel { padding-bottom: 4.6cqw; }
+@keyframes steamPulseLime {
+  0%   { box-shadow: 0 0 0 0.3cqw rgba(190, 238, 120, 0.35), 0 0 0 0 rgba(164, 208, 7, 0.55); }
+  70%  { box-shadow: 0 0 0 0.3cqw rgba(190, 238, 120, 0.35), 0 0 0 2.4cqw rgba(164, 208, 7, 0); }
+  100% { box-shadow: 0 0 0 0.3cqw rgba(190, 238, 120, 0.35), 0 0 0 0 rgba(164, 208, 7, 0); }
 }
-@keyframes steamPulseGreen {
-  0%   { box-shadow: 0 0 0 0 rgba(164, 208, 7, 0.6); }
-  70%  { box-shadow: 0 0 0 3cqw rgba(164, 208, 7, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(164, 208, 7, 0); }
+@media (prefers-reduced-motion: reduce) {
+  .steam-mock--request .steam-mock__btn { animation: none; }
 }
